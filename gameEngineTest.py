@@ -70,21 +70,17 @@ class Camera:
 
     # I want to fit all of the players inside of the box of the camera
     def getBoxSize(self):
-        # it will need to get the distance of the players
-        # but how would that work if I have 3 players?
+        # TODO: n players
+        # I think to do n players I would need to calculate the max and min values from the midpoint
+        # for both the x and y direction
 
-        # just have it for 2 for now
         
-        # get the difference between p1 and p2
+        # for now just get the difference between p1 and p2
         players = self.players
         pos1 = players[0].pos()
         pos2 = players[1].pos()
         distance = pos1.distance_to(pos2)
-        return distance
-
-        # TODO: there should be a bounds in which the camera is static if the players are close to each other
-
-        
+        return max(distance, 200)
 
     def getMidpoint(self):
         # this sums all of the x's and all of the y's of the players
@@ -128,9 +124,9 @@ def main():
         for player in players:
             player.draw()
         
-        boxSize = c1.getBoxSize() + 100
+        padding = 100
+        boxSize = c1.getBoxSize() + padding
         
-
         # draw the midpoint of the camera
         posX = c1.getMidpoint()[0] - boxSize/2
         posY = c1.getMidpoint()[1] - boxSize/2

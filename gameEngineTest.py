@@ -55,12 +55,6 @@ class Player:
     def moveDown(self):
         self.y += 3
 
-    '''def handleInput(self):
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if event.key == LEFT: self.x -= 1
-                if event.key == RIGHT: self.x += 1'''
-
 def clear():
     screen.fill(black)    
 
@@ -69,6 +63,28 @@ def draw():
     clock.tick(FPS)
     pygame.display.flip()
 
+class Camera:
+    def __init__(self,players):     
+        self.players = players
+
+    # I want to fit all of the players inside of the box of the camera
+    def getBoxSize(self):
+        # it will need to get the distance of the players
+        # but how would that work if I have 3 players?
+
+        # just have it for 2 for now
+
+        
+
+    def getMidpoint(self):
+        # this sums all of the x's and all of the y's of the players
+        cordX = [player.x for player in self.players]
+        cordY = [player.y for player in self.players]
+        # then find the average to find the midpoint
+        midpointX = sum(cordX)/len(cordX)
+        midpointY = sum(cordY)/len(cordY)
+        midpoint = (midpointX,midpointY)
+        return midpoint
 
 def main():
     time =  0
@@ -79,7 +95,7 @@ def main():
     p2 = Player(20,50, green)
 
     players = [p1,p2]
-    #c1 = Camera(players)
+    c1 = Camera(players)
     
     while keepGoing:
         for event in pygame.event.get():
@@ -88,18 +104,26 @@ def main():
 
         # pretty bad but just in testing phase
         keysPressed = pygame.key.get_pressed()
-        if keysPressed[K_a]:    p1.moveLeft()
         if keysPressed[K_w]:    p1.moveUp()
-        if keysPressed[K_d]:    p1.moveRight()
         if keysPressed[K_s]:    p1.moveDown()
-        if keysPressed[K_LEFT]: p2.moveLeft()
-        if keysPressed[K_RIGHT]: p2.moveRight()
+        if keysPressed[K_a]:    p1.moveLeft()
+        if keysPressed[K_d]:    p1.moveRight()
         if keysPressed[K_UP]:   p2.moveUp()
         if keysPressed[K_DOWN]: p2.moveDown()
-                    
+        if keysPressed[K_LEFT]: p2.moveLeft()
+        if keysPressed[K_RIGHT]: p2.moveRight()                    
+
         clear()
-        p1.draw()
-        p2.draw()        
+        
+        for player in players:
+            player.draw()
+        
+
+        # draw the midpoint of the camera
+        posX = c1.getMidpoint()[0] - 100
+        posY = c1.getMidpoint()[1] - 100
+        pygame.draw.rect(screen, blue, (posX,posY, 200,200),1)
+        
         draw()
         
     pygame.quit()

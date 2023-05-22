@@ -7,8 +7,8 @@ import math
 pygame.init()
 
 # set up the screen
-width = 500
-height = 500
+width = 1000
+height = 1000
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("gameEngineTest")
 clock = pygame.time.Clock()
@@ -54,12 +54,13 @@ class Player:
 
     def moveDown(self):
         self.y += 3
+    def pos(self):
+        return pygame.Vector2(self.x,self.y)
 
 def clear():
     screen.fill(black)    
 
 def draw():
-    # draw
     clock.tick(FPS)
     pygame.display.flip()
 
@@ -73,6 +74,15 @@ class Camera:
         # but how would that work if I have 3 players?
 
         # just have it for 2 for now
+        
+        # get the difference between p1 and p2
+        players = self.players
+        pos1 = players[0].pos()
+        pos2 = players[1].pos()
+        distance = pos1.distance_to(pos2)
+        return distance
+
+        # TODO: there should be a bounds in which the camera is static if the players are close to each other
 
         
 
@@ -91,8 +101,8 @@ def main():
   
     keepGoing = True
 
-    p1 = Player(50,50, red)
-    p2 = Player(20,50, green)
+    p1 = Player(width/2 +  0,height/2, red)
+    p2 = Player(width/2 + 50,height/2, green)
 
     players = [p1,p2]
     c1 = Camera(players)
@@ -118,11 +128,13 @@ def main():
         for player in players:
             player.draw()
         
+        boxSize = c1.getBoxSize() + 100
+        
 
         # draw the midpoint of the camera
-        posX = c1.getMidpoint()[0] - 100
-        posY = c1.getMidpoint()[1] - 100
-        pygame.draw.rect(screen, blue, (posX,posY, 200,200),1)
+        posX = c1.getMidpoint()[0] - boxSize/2
+        posY = c1.getMidpoint()[1] - boxSize/2
+        pygame.draw.rect(screen, blue, (posX,posY, boxSize, boxSize),1)
         
         draw()
         

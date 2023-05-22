@@ -70,17 +70,31 @@ class Camera:
 
     # I want to fit all of the players inside of the box of the camera
     def getBoxSize(self):
-        # TODO: n players
-        # I think to do n players I would need to calculate the max and min values from the midpoint
-        # for both the x and y direction
-
-        
-        # for now just get the difference between p1 and p2
+        midpoint = self.getMidpoint()
         players = self.players
-        pos1 = players[0].pos()
-        pos2 = players[1].pos()
-        distance = pos1.distance_to(pos2)
-        return max(distance, 200)
+
+        furthestLeftOfMidpoint = float("inf")
+        furthestRightOfMidpoint = float("-inf")
+        furthestUpOfMidpoint = float("inf")
+        furthestDownOfMidpoint = float("-inf")
+
+        for player in players:
+            playerXPos = player.pos()[0]
+            playerYPos = player.pos()[1]
+            
+            if playerXPos < furthestLeftOfMidpoint:
+                furthestLeftOfMidpoint = playerXPos
+            if playerYPos < furthestUpOfMidpoint:
+                furthestUpOfMidpoint = playerYPos   
+            if playerXPos > furthestRightOfMidpoint:
+                furthestRightOfMidpoint = playerXPos
+            if playerYPos > furthestDownOfMidpoint:
+                furthestDownOfMidpoint = playerYPos
+
+        x = furthestRightOfMidpoint - furthestLeftOfMidpoint
+        y = furthestDownOfMidpoint - furthestUpOfMidpoint
+
+        return max(math.sqrt(x**2 + y**2), 200)
 
     def getMidpoint(self):
         # this sums all of the x's and all of the y's of the players
@@ -89,7 +103,7 @@ class Camera:
         # then find the average to find the midpoint
         midpointX = sum(cordX)/len(cordX)
         midpointY = sum(cordY)/len(cordY)
-        midpoint = (midpointX,midpointY)
+        midpoint = pygame.Vector2(midpointX,midpointY)
         return midpoint
 
 def main():
@@ -99,8 +113,9 @@ def main():
 
     p1 = Player(width/2 +  0,height/2, red)
     p2 = Player(width/2 + 50,height/2, green)
+    p3 = Player(width/2, height/2, white)
 
-    players = [p1,p2]
+    players = [p1,p2, p3]
     c1 = Camera(players)
     
     while keepGoing:
@@ -124,7 +139,7 @@ def main():
         for player in players:
             player.draw()
         
-        padding = 100
+        padding = 200
         boxSize = c1.getBoxSize() + padding
         
         # draw the midpoint of the camera
